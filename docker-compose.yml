@@ -1,0 +1,79 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:latest'
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: unforgettabledew
+      POSTGRES_PASSWORD: 27092100
+      POSTGRES_DB: student
+#    volumes:
+#      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+#    networks:
+#      - postgres
+    restart: unless-stopped
+
+  my_sql:
+    image: 'mysql:latest'
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: 27092100
+      MYSQL_DATABASE: details
+      MYSQL_USER: unforgettabledew
+      MYSQL_PASSWORD: 27092100
+    ports:
+      - "3307:3306"
+    restart: unless-stopped
+
+  student:
+    image: 'student:latest'
+    container_name: student_container
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/student
+      SPRING_DATASOURCE_USERNAME: unforgettabledew
+      SPRING_DATASOURCE_PASSWORD: 27092100
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      EUREKA.CLIENT.SERVICE-URL.DEFAULTZONE: http://eureka:8761/eureka
+    ports:
+      - "8080:8080"
+
+  details:
+    image: 'details:latest'
+    container_name: details_container
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://my_sql:3306/details
+      SPRING_DATASOURCE_USERNAME: unforgettabledew
+      SPRING_DATASOURCE_PASSWORD: 27092100
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      EUREKA.CLIENT.SERVICE-URL.DEFAULTZONE: http://eureka:8761/eureka
+    ports:
+      - "8081:8081"
+
+  eureka:
+    image: 'eureka-server:latest'
+    container_name: eureka_container
+    ports:
+      - "8761:8761"
+#  pgadmin:
+#    container_name: pgadmin
+#    image: dpage/pgadmin4
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+#      PGADMIN_CONFIG_SERVER_MODE: 'False'
+#    volumes:
+#      - pgadmin:/var/lib/pgadmin
+#    ports:
+#      - "5050:80"
+#    networks:
+#      - postgres
+#    restart: unless-stopped
+#networks:
+#  postgres:
+#    driver: bridge
+#
+#volumes:
+#  postgres:
+#  pgadmin:
